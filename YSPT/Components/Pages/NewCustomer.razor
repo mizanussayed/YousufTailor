@@ -1,0 +1,10 @@
+﻿@page "/NewCustomer/{value}"
+<PageTitle>Add Customer</PageTitle>
+<h3>NewCustomer</h3>
+
+@Value
+
+@code {
+    [Parameter]
+    public string? Value { get; set; }
+}

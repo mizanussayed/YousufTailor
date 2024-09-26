@@ -1,0 +1,144 @@
+﻿<style>
+    .mud-input-control-input-container {
+        padding:8px !important;
+    }
+
+    .mud-autocomplete-no-items{
+        padding: 0!important;
+    }
+</style>
+
+<MudAutocomplete T="string" @bind-Value="searchQuery" SearchFunc="@Search"
+                 ResetValueOnEmptyText="@resetValueOnEmptyText"
+                 CoerceText="@coerceText" CoerceValue="@coerceValue"
+                 Placeholder="01730-298184"
+                 Underline="false"
+                 SelectValueOnTab
+                 NoItemsTemplate="NoItemsTemplateContent"
+                 AdornmentIcon="@Icons.Material.Filled.Search"
+                 Adornment="Adornment.Start"
+                 />
+
+<MudAutocomplete T="string" @bind-Value="searchQuery"
+                 SearchFunc="@Search"
+                 Placeholder="01730-298184"
+                 Underline="false"
+                 SelectValueOnTab
+                 AdornmentIcon="@Icons.Material.Filled.Search"
+                 Adornment="Adornment.Start">
+    <ItemTemplate Context="e">
+        <MudText>
+            <MudIcon Icon="@Icons.Material.Filled.CheckBoxOutlineBlank" Class="mb-n1 mr-3" />@e
+        </MudText>
+    </ItemTemplate>
+    <ItemSelectedTemplate Context="e">
+        <MudText>
+            <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3" />@e
+        </MudText>
+    </ItemSelectedTemplate>
+    <NoItemsTemplate>
+        @if (ShowEmpty)
+        {
+            <div class="d-flex justify-space-between flex-grow-1 gap-4 mud-list-item mud-list-item-gutters mud-ripple">
+                <b>No results found.</b>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" @onclick='() => OnAddClick()'>
+                    Add Now
+                </MudButton>
+            </div>
+        }
+    </NoItemsTemplate>
+</MudAutocomplete>
+<MudAutocomplete T="string" @bind-Value="searchQuery"
+                 SearchFunc="@Search"
+                 Placeholder="01730-298184"
+                 Underline="false"
+                 SelectValueOnTab
+                 AdornmentIcon="@Icons.Material.Filled.Search"
+                 Adornment="Adornment.Start">
+    <ItemTemplate Context="e">
+        <div class="d-flex justify-space-between flex-grow-1 gap-4 mud-list-item mud-list-item-gutters mud-ripple">
+            <b>@e</b>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" @onclick='() => OnSelectionChange(e)'>
+                Add Now
+            </MudButton>
+        </div>
+    </ItemTemplate>
+    <ItemSelectedTemplate Context="e">
+        <MudText>
+            <MudIcon Icon="@Icons.Material.Filled.CheckBox" Class="mb-n1 mr-3" />@e
+        </MudText>
+    </ItemSelectedTemplate>
+    <NoItemsTemplate>
+        @if (ShowEmpty)
+        {
+            <div class="d-flex justify-space-between flex-grow-1 gap-4 mud-list-item mud-list-item-gutters mud-ripple">
+                <b>No results found.</b>
+                <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" @onclick='() => OnAddClick()'>
+                    Add Now
+                </MudButton>
+            </div>
+        }
+    </NoItemsTemplate>
+</MudAutocomplete>
+
+
+@code {
+    [Inject] NavigationManager? Navigation { get; set; }
+    private bool resetValueOnEmptyText;
+    private bool coerceText;
+    private bool coerceValue;
+    private string searchQuery = string.Empty;
+    private bool ShowEmpty = true;
+    private string[] states =
+    {
+        "Alabama", "Alaska", "American Samoa", "Arizona",
+        "Arkansas", "California", "Colorado", "Connecticut",
+        "Delaware", "District of Columbia", "Federated States of Micronesia",
+        "Florida", "Georgia", "Guam", "Hawaii", "Idaho",
+        "Illinois", "Indiana", "Iowa", "Kansas", "Kentucky",
+        "Louisiana", "Maine", "Marshall Islands", "Maryland",
+        "Massachusetts", "Michigan", "Minnesota", "Mississippi",
+        "Missouri", "Montana", "Nebraska", "Nevada",
+        "New Hampshire", "New Jersey", "New Mexico", "New York",
+        "North Carolina", "North Dakota", "Northern Mariana Islands", "Ohio",
+        "Oklahoma", "Oregon", "Palau", "Pennsylvania", "Puerto Rico",
+        "Rhode Island", "South Carolina", "South Dakota", "Tennessee",
+        "Texas", "Utah", "Vermont", "Virgin Island", "Virginia",
+        "Washington", "West Virginia", "Wisconsin", "Wyoming",
+    };
+
+    private async Task<IEnumerable<string>> Search(string value, CancellationToken token)
+    {
+        // In real life use an asynchronous function for fetching data from an api.
+        await Task.Delay(5, token);
+
+
+
+        ShowEmpty =  value.Length > 4;
+        if (string.IsNullOrEmpty(value) || value.Length < 3)
+            return new string[0];
+        return states.Where(x => x.Contains(value, StringComparison.InvariantCultureIgnoreCase));
+    }
+
+    private void OnSelectionChange(string value)
+    {
+        Navigation?.NavigateTo($"/NewCustomer/{value}");
+    }
+
+    private void OnAddClick()
+    {
+        Navigation?.NavigateTo("/NewCustomer");
+    }
+
+    private RenderFragment NoItemsTemplateContent => @<div>
+    @if (ShowEmpty)
+    {
+        <div class="d-flex justify-space-between flex-grow-1 gap-4 mud-list-item mud-list-item-gutters mud-ripple">
+            <b>No results found.</b>
+            <MudButton Variant="Variant.Filled" StartIcon="@Icons.Material.Filled.Add" @onclick='() => OnAddClick()'>
+                Add Now
+            </MudButton>
+        </div>
+    }
+    </div>;
+}
